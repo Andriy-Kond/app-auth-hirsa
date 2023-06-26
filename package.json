@@ -1,0 +1,17 @@
+{
+  "name": "app-auth-hirsa",
+  "version": "1.0.0",
+  "description": "JS, Node.js, HTML, CSS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
