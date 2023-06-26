@@ -51,11 +51,21 @@ router.post('/login', async (req, res) => {
       res.status(400).json({ message: `User by email ${email} not found` });
 
     // lean() вертає не документ mongoDB, а JSON-об'єкт
-    const user = await User.findOne({ email }, '_id email password').lean(); // повернуться лише ті поля, що ми вказали. Якщо вказати з дефісом, то параметр теж не повернеться
+    // const user = await User.findOne({ email }, '_id email password').lean();
+
+    const user = await User.findOne({ email }, '_id email password'); // повернуться лише ті поля, що ми вказали. Якщо вказати з дефісом, то параметр теж не повернеться
     // const user = await User.findOne({ email }); // повернеться весь об'єкт з бази (без password, бо у схемі вказано select: false): _id, email, createdAt, updatedAt, __v
 
-    const passed = await comparePass(password, user.password);
+    //& Перенесли перевірку пароля у схему-клас "UserSchema" (schemas/User.js)
+    // const passed = await comparePass(password, user.password);
+    // console.log('router.post >> passed:', passed);
+    //& /Перенесли перевірку пароля у схему-клас "UserSchema" (schemas/User.js)
+    const passed = await user.chekPassword(password);
     console.log('router.post >> passed:', passed);
+    if (!passed)
+      return res
+        .status(400)
+        .json({ message: `User password ${password} not valid` });
 
     res.send(user);
   } catch (error) {
