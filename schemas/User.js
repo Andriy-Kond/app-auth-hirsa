@@ -32,6 +32,15 @@ const UserSchema = Schema(
   }
 );
 
+// Методи, які ми виконуємо до (.pre()) і після (.post()) якоїсь операції
+// Перед тим як зберігати наш об'єкт ми будемо шифрувати наш пароль
+UserSchema.pre('save', async function (next) {
+  const salt = await bcrypt.genSalt(10); // генерацію солі
+  const hash = await bcrypt.hash(this.password, salt); // хешування паролю
+  this.password = hash;
+  next();
+});
+
 // Створюємо метод checkPassword за допомогою mongoose для перевірки паролю замість методу compare у userRoutes.js (const passed = await comparePass(password, user.password);)
 UserSchema.methods.checkPassword = async function (password) {
   return await comparePass(password, this.password);

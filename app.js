@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const logger = require('morgan');
-const usersRouter = require('./usersRoutes');
+const usersRouter = require('./routers/usersRoutes');
 require('./db-connection.js');
 
 const defaultPort = 3001;

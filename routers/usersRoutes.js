@@ -1,6 +1,21 @@
+require('dotenv').config({ path: `${__dirname}/../.env` });
 const router = require('express').Router();
-const { User } = require('./schemas/User');
-const { hash, comparePass } = require('./controllers/bcrypt');
+const { auth } = require('../controllers/auth');
+const { User } = require('../schemas/User');
+
+//~ Прибираємо, бо перенесли цей функціонал
+// const { hash, comparePass } = require('../controllers/bcrypt'); у schemas/User.js у UserSchema.pre
+//~ /Прибираємо, бо перенесли цей функціонал
+
+router.get('/', auth, async (req, res) => {
+  try {
+    const users = await User.find({}, '-password -__v').lean(); // lean() - перетворити документ mongoose у JSON
+    res.send(users); // відправити всіх юзерів на фронт
+  } catch (error) {
+    console.log('router.post >> error:', error);
+    res.status(400).json({ message: error.message });
+  }
+});
 
 router.post('/create', async (req, res) => {
   try {
@@ -18,9 +33,13 @@ router.post('/create', async (req, res) => {
     }
 
     const user = await User({ email });
-    const hashPass = await hash(password);
-    user.password = hashPass;
-    console.log('router.post >> user:', user);
+
+    //~ Прибираємо, бо перенесли цей функціонал
+    // const hashPass = await hash(password);
+    // user.password = hashPass;
+    // console.log('router.post >> user:', user);
+    //~ /Прибираємо, бо перенесли цей функціонал
+
     await user.save(); // зберігаємо юзера
     res.send(user); // повертаємо на фронтенд
   } catch (error) {
@@ -65,9 +84,14 @@ router.post('/login', async (req, res) => {
     if (!passed)
       return res
         .status(400)
-        .json({ message: `User password ${password} not valid` });
+        .json({ message: `User's password ${password} not valid` });
 
-    res.send(user);
+    const token = jwt.sign({ id: user._id }, process.env.SECRET, {
+      expiresIn: '47h',
+    });
+
+    // res.send(user);
+    res.status(200).send({ message: 'SUCCESS', token });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
