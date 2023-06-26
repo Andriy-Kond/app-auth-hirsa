@@ -9,7 +9,8 @@ const auth = async (req, res, next) => {
     // Знайти слово Bearer у rewHeaders.
     const foundToken = req.rewHeaders.find(str => str.includes('Bearer')) || '';
     // Далі розбити цей рядок на масив через пробіл і взяти з цього масиву перший елемент (нульовий буде слово Bearer)
-    token = foundToken?.split(' ')[1];
+    if (!foundToken) return new Error(`Error token ${foundToken} is filed`); // ця помилка полетить у catch
+    const token = foundToken?.split(' ')[1];
     // if (!token) res.status(400).send(`Error token ${token} is filed`);
     if (!token) return new Error(`Error token ${token} is filed`); // ця помилка полетить у catch
 
