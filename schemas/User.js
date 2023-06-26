@@ -10,14 +10,14 @@ const UserSchema = Schema(
       required: true,
       unique: true,
       trim: true, // обрізає пусті по бокам
-      minlength: 10,
-      maxlength: 50,
+      minLength: 10,
+      maxLength: 50,
     },
     password: {
       type: String,
       required: true,
-      minlength: 6,
-      maxlength: 100,
+      minLength: 6,
+      maxLength: 100,
       select: false, // на фронтенд не буде повертатись це поле
     },
     age: {
